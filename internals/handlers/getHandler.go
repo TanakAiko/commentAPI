@@ -10,8 +10,8 @@ import (
 	md "comment/models"
 )
 
-func getAllComment(w http.ResponseWriter, db *sql.DB) {
-	rows, err := db.Query("SELECT id, postId, userId, nickname, likedBy, dislikedBy, content, nbrLike, nbrDislike, createdAt FROM comments ORDER BY createdAt DESC")
+func getAllPostComment(w http.ResponseWriter, commentR md.Comment, db *sql.DB) {
+	rows, err := db.Query("SELECT id, postId, userId, nickname, likedBy, dislikedBy, content, nbrLike, nbrDislike, createdAt FROM comments WHERE postId = ? ORDER BY createdAt DESC", commentR.PostId)
 	if err != nil {
 		http.Error(w, "Error while getting comments : "+err.Error(), http.StatusInternalServerError)
 		return
@@ -23,7 +23,7 @@ func getAllComment(w http.ResponseWriter, db *sql.DB) {
 		var comment md.Comment
 		var likedByJSON string
 		var dislikedByJSON string
-		if err := rows.Scan(&comment.Id, comment.PostId, &comment.UserId, &comment.Nickname, &likedByJSON, &dislikedByJSON, &comment.Content, &comment.NbrLike, &comment.NbrDislike, &comment.CreateAt); err != nil {
+		if err := rows.Scan(&comment.Id, &comment.PostId, &comment.UserId, &comment.Nickname, &likedByJSON, &dislikedByJSON, &comment.Content, &comment.NbrLike, &comment.NbrDislike, &comment.CreateAt); err != nil {
 			fmt.Println("ERROR 1")
 			http.Error(w, "Error while getting comments : "+err.Error(), http.StatusInternalServerError)
 			return
@@ -42,7 +42,12 @@ func getAllComment(w http.ResponseWriter, db *sql.DB) {
 		}
 
 		comments = append(comments, comment)
+	}
 
+	if err = rows.Err(); err != nil {
+		fmt.Println("ERROR 2")
+		http.Error(w, "Error while iterating comments : "+err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	tools.WriteResponse(w, comments, http.StatusOK)
