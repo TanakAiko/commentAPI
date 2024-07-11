@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"encoding/json"
 	"log"
 	"os"
 	"time"
@@ -22,16 +21,6 @@ type Comment struct {
 }
 
 func (comment *Comment) CreateComment(db *sql.DB) error {
-	likedByJSON, err := json.Marshal(comment.LikedBy)
-	if err != nil {
-		return err
-	}
-
-	dislikedByJSON, err := json.Marshal(comment.DisLikedBy)
-	if err != nil {
-		return err
-	}
-
 	tx, err := db.Begin()
 	if err != nil {
 		log.Println(err)
@@ -55,8 +44,8 @@ func (comment *Comment) CreateComment(db *sql.DB) error {
 		comment.PostId,
 		comment.UserId,
 		comment.Nickname,
-		string(likedByJSON),
-		string(dislikedByJSON),
+		"",
+		"",
 		comment.Content,
 		comment.NbrLike,
 		comment.NbrDislike,
