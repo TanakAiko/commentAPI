@@ -30,6 +30,8 @@ func MainHandler(w http.ResponseWriter, r *http.Request) {
 		deleteComment(w, req.Body, db)
 	case "getAllPostComment":
 		getAllPostComment(w, req.Body, db)
+	case "getLastComment":
+		getLastComment(w, db)
 	case "updateLike":
 		updateLike(w, req.Body, db)
 	default:
