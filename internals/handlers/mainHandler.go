@@ -21,7 +21,7 @@ func MainHandler(w http.ResponseWriter, r *http.Request) {
 	var req md.Request
 	json.NewDecoder(r.Body).Decode(&req)
 
-	fmt.Println("req.Action : ", req.Action)
+	fmt.Println("request: ", req.Action)
 
 	switch req.Action {
 	case "createComment":

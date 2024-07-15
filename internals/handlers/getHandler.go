@@ -24,33 +24,23 @@ func getLastComment(w http.ResponseWriter, db *sql.DB) {
 		return
 	}
 
-	fmt.Println("likedByJSON: ", likedByJSON)
 	if err := json.Unmarshal([]byte(likedByJSON), &comment.LikedBy); err != nil {
-		fmt.Println("ERROR 2")
 		fmt.Println("Error while unmarshaling likedBy: " + err.Error())
 	}
 
-	fmt.Println("dislikedByJSON: ", dislikedByJSON)
 	if err := json.Unmarshal([]byte(dislikedByJSON), &comment.DisLikedBy); err != nil {
-		fmt.Println("ERROR 3")
 		fmt.Println("Error while unmarshaling dislikedBy: " + err.Error())
 	}
 
 	if err := row.Err(); err != nil {
-		fmt.Println("ERROR 4")
 		http.Error(w, "Error while iterating comments: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Utiliser un logger approprié pour des logs détaillés
-	fmt.Printf("Fetched comment: %+v\n", comment)
-
-	// Utiliser des outils appropriés pour l'écriture de la réponse
 	tools.WriteResponse(w, comment, http.StatusOK)
 }
 
 func getAllPostComment(w http.ResponseWriter, commentR md.Comment, db *sql.DB) {
-	fmt.Println("start getAllPostComment !!!")
 
 	// Préparer la requête avec context pour un meilleur contrôle
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
